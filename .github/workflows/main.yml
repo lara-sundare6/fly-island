@@ -1,0 +1,59 @@
+name: Fly Island CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project: [rust_project, go_project, datafusion_project, moby_project]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Rust
+      if: matrix.project == 'rust_project' || matrix.project == 'datafusion_project'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: Set up Go
+      if: matrix.project == 'go_project' || matrix.project == 'moby_project'
+      uses: actions/setup-go@v2
+      with:
+        go-version: '^1.16'
+
+    - name: Build project
+      run: |
+        if [ "${{ matrix.project }}" == "rust_project" ]; then
+          ./scripts/build_rust_project.sh
+        elif [ "${{ matrix.project }}" == "datafusion_project" ]; then
+          cargo build --release --manifest-path=datafusion_project/Cargo.toml
+        elif [ "${{ matrix.project }}" == "go_project" ]; then
+          ./scripts/build_go_project.sh
+        elif [ "${{ matrix.project }}" == "moby_project" ]; then
+          docker build -t fly-island/moby-project ./moby_project
+        fi
+
+    - name: Run tests
+      run: |
+        if [ "${{ matrix.project }}" == "go_project" ]; then
+          go test ./go_project/terraform_tests
+        elif [ "${{ matrix.project }}" == "rust_project" ] || [ "${{ matrix.project }}" == "datafusion_project" ]; then
+          cargo test --manifest-path=datafusion_project/Cargo.toml
+        fi
+
+    - name: Deploy to GitHub Pages
+      if: matrix.project == 'moby_project'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build
