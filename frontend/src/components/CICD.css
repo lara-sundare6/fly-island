@@ -1,0 +1,13 @@
+/* src/components/CICD.css */
+.cicd {
+  padding: 20px;
+  background-color: #c0c0c0;
+}
+
+.cicd h2 {
+  color: #666;
+}
+
+.cicd p {
+  color: #999;
+}
