@@ -1,0 +1,40 @@
+.pollinators {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.pollinator-list {
+  list-style: none;
+  padding: 0;
+}
+
+.pollinator-item {
+  cursor: pointer;
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+}
+
+.pollinator-item:hover {
+  background-color: #d0d0d0;
+}
+
+.pollinator-details {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.pollinator-details h3 {
+  margin-top: 0;
+}
+
+.pollinator-details img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-top: 10px;
+}
